@@ -608,8 +608,6 @@ int page_fault(int pid, uint16_t virtual_address)
 
     entry->frame_id = frame_id;
     entry->p_bit = 1;
-    entry->r_bit = 0;
-    entry->m_bit = 0;
 
     for (int i = 0; i < PAGE_TABLE_SIZE; ++i)
     {
