@@ -353,7 +353,6 @@ int get_physical_address(uint16_t virtual_address, uint16_t *physical_address)
     uint16_t offset = (uint16_t)(virtual_address % page_size);
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
-    
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
