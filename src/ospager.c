@@ -382,7 +382,7 @@ static int translate_address(uint16_t virtual_address, uint16_t *physical_addres
 
     if (g_ram_state == NULL)
     {
-        return -2;
+        return -5;
     }
 
     uint8_t page_size = g_ram_state->page_size;
@@ -502,7 +502,7 @@ int page_fault(int pid, uint16_t virtual_address)
 {
     if (g_ram_state == NULL)
     {
-        return -3;
+        return -5;
     }
 
     tTaskStruct *task = get_task_struct(pid);
