@@ -354,11 +354,13 @@ int get_physical_address(uint16_t virtual_address, uint16_t *physical_address)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
+    // Check if page is present in RAM first
     if (entry->p_bit == 0)
     {
         return -1;
     }
 
+    // Check rwx permissions - rwx=000 means page not accessible (segmentation fault)
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
@@ -390,16 +392,17 @@ int fetch_instruction(uint16_t virtual_address, uint8_t *data)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
+    // Check if page is present in RAM
     if (entry->p_bit == 0)
     {
         return -1;
     }
 
+    // Check execute permission - segmentation fault if page not accessible, access violation if no x permission
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
     }
-
     if (entry->x == 0)
     {
         return -3;
@@ -433,16 +436,17 @@ int load_data(uint16_t virtual_address, uint8_t *data)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
+    // Check if page is present in RAM
     if (entry->p_bit == 0)
     {
         return -1;
     }
 
+    // Check read permission - segmentation fault if page not accessible, access violation if no r permission
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
     }
-
     if (entry->r == 0)
     {
         return -3;
@@ -476,16 +480,17 @@ int store_data(uint16_t virtual_address, uint8_t data)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
+    // Check if page is present in RAM
     if (entry->p_bit == 0)
     {
         return -1;
     }
 
+    // Check write permission - segmentation fault if page not accessible, access violation if no w permission
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
     }
-
     if (entry->w == 0)
     {
         return -3;
