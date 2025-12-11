@@ -333,10 +333,6 @@ int get_physical_address(uint16_t virtual_address, uint16_t *physical_address)
         return -3;
     }
 
-    if (g_ram_state == NULL)
-    {
-        return -5;
-    }
 
     if (g_active_page_table == NULL)
     {
@@ -344,6 +340,11 @@ int get_physical_address(uint16_t virtual_address, uint16_t *physical_address)
     }
 
     uint8_t page_size = g_ram_state->page_size;
+    if (page_size == 0)
+    {
+        return -5;
+    }
+
     uint16_t page_index = (uint16_t)(virtual_address / page_size);
     uint16_t offset = (uint16_t)(virtual_address % page_size);
 
@@ -353,16 +354,18 @@ int get_physical_address(uint16_t virtual_address, uint16_t *physical_address)
     }
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
-
+        if (entry->r == 0 && entry->w == 0 && entry->x == 0)
+    {
+        return -2;
+    }
+    // Page not present -> page fault
     if (entry->p_bit == 0)
     {
         return -1;
     }
 
-    if (entry->r == 0 && entry->w == 0 && entry->x == 0)
-    {
-        return -2;
-    }
+    // Segmentation fault if page is inaccessible to the task
+
 
     *physical_address = (uint16_t)(entry->frame_id * page_size + offset);
     return 0;
@@ -380,6 +383,11 @@ int fetch_instruction(uint16_t virtual_address, uint8_t *data)
     }
 
     uint8_t page_size = g_ram_state->page_size;
+    if (page_size == 0)
+    {
+        return -5;
+    }
+
     uint16_t page_index = (uint16_t)(virtual_address / page_size);
     uint16_t offset = (uint16_t)(virtual_address % page_size);
 
@@ -390,19 +398,22 @@ int fetch_instruction(uint16_t virtual_address, uint8_t *data)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
-    if (entry->p_bit == 0)
-    {
-        return -1;
-    }
-
+    // Segmentation fault if page not accessible at all
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
     }
 
+    // Access violation: execute not allowed
     if (entry->x == 0)
     {
         return -3;
+    }
+
+    // Page fault if not present
+    if (entry->p_bit == 0)
+    {
+        return -1;
     }
 
     uint16_t physical = (uint16_t)(entry->frame_id * page_size + offset);
@@ -423,6 +434,11 @@ int load_data(uint16_t virtual_address, uint8_t *data)
     }
 
     uint8_t page_size = g_ram_state->page_size;
+    if (page_size == 0)
+    {
+        return -5;
+    }
+
     uint16_t page_index = (uint16_t)(virtual_address / page_size);
     uint16_t offset = (uint16_t)(virtual_address % page_size);
 
@@ -433,19 +449,22 @@ int load_data(uint16_t virtual_address, uint8_t *data)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
-    if (entry->p_bit == 0)
-    {
-        return -1;
-    }
-
+    // Segmentation fault if page not accessible at all
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
     }
 
+    // Access violation: read not allowed
     if (entry->r == 0)
     {
         return -3;
+    }
+
+    // Page fault if not present
+    if (entry->p_bit == 0)
+    {
+        return -1;
     }
 
     uint16_t physical = (uint16_t)(entry->frame_id * page_size + offset);
@@ -466,6 +485,11 @@ int store_data(uint16_t virtual_address, uint8_t data)
     }
 
     uint8_t page_size = g_ram_state->page_size;
+    if (page_size == 0)
+    {
+        return -5;
+    }
+
     uint16_t page_index = (uint16_t)(virtual_address / page_size);
     uint16_t offset = (uint16_t)(virtual_address % page_size);
 
@@ -476,19 +500,22 @@ int store_data(uint16_t virtual_address, uint8_t data)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
-    if (entry->p_bit == 0)
-    {
-        return -1;
-    }
-
+    // Segmentation fault if page not accessible at all
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
     }
 
+    // Access violation: write not allowed
     if (entry->w == 0)
     {
         return -3;
+    }
+
+    // Page fault if not present
+    if (entry->p_bit == 0)
+    {
+        return -1;
     }
 
     uint16_t physical = (uint16_t)(entry->frame_id * page_size + offset);
@@ -539,6 +566,11 @@ int page_fault(int pid, uint16_t virtual_address)
     }
 
     uint8_t page_size = g_ram_state->page_size;
+    if (page_size == 0)
+    {
+        return -5;
+    }
+
     uint16_t page_index = (uint16_t)(virtual_address / page_size);
 
     if (page_index >= PAGE_TABLE_SIZE)

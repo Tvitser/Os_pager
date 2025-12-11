@@ -129,7 +129,7 @@ Expected equality of these values:
 [       OK ] MMUTest.StoreDataWithoutPageTable (0 ms)
 [ RUN      ] MMUTest.StoreDataFailsWithoutRamInit
 [       OK ] MMUTest.StoreDataFailsWithoutRamInit (0 ms)
-[----------] 19 tests from MMUTest (2 ms total)
+[----------] 19 tests from MMUTest (3 ms total)
 
 [----------] 5 tests from MMUPagerTest
 [ RUN      ] MMUPagerTest.GetPhysicalAddressSuccessAfterPageFault
@@ -239,10 +239,10 @@ Expected equality of these values:
 [ RUN      ] Scale.CallPageFaultWithAllTasksHavingOnePageInRam
 [       OK ] Scale.CallPageFaultWithAllTasksHavingOnePageInRam (0 ms)
 [ RUN      ] Scale.CallPageFaultWithAllTasksHavingOnePageInRamModifiedWrittenToAddressSpace
-[       OK ] Scale.CallPageFaultWithAllTasksHavingOnePageInRamModifiedWrittenToAddressSpace (0 ms)
+[       OK ] Scale.CallPageFaultWithAllTasksHavingOnePageInRamModifiedWrittenToAddressSpace (1 ms)
 [ RUN      ] Scale.MultipleModifiedPagesAreWrittenToAddressSpace
 [       OK ] Scale.MultipleModifiedPagesAreWrittenToAddressSpace (0 ms)
-[----------] 6 tests from Scale (2 ms total)
+[----------] 6 tests from Scale (3 ms total)
 
 [----------] 3 tests from TaskManagerTest_NoRam
 [ RUN      ] TaskManagerTest_NoRam.NoManager
@@ -351,7 +351,7 @@ Expected equality of these values:
 [----------] 15 tests from Positive/RamParamTest (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 112 tests from 12 test suites ran. (9 ms total)
+[==========] 112 tests from 12 test suites ran. (11 ms total)
 [  PASSED  ] 104 tests.
 [  FAILED  ] 8 tests, listed below:
 [  FAILED  ] MMUTest.GetPhysicalAddressPageFaultOnP0
