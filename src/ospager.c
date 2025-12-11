@@ -354,14 +354,14 @@ int get_physical_address(uint16_t virtual_address, uint16_t *physical_address)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
-    if (entry->p_bit == 0)
-    {
-        return -1;
-    }
-
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
+    }
+
+    if (entry->p_bit == 0)
+    {
+        return -1;
     }
 
     uint16_t frame_count = get_frame_count();
@@ -396,6 +396,11 @@ int fetch_instruction(uint16_t virtual_address, uint8_t *data)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
+    if (entry->p_bit == 0)
+    {
+        return -1;
+    }
+
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
@@ -404,11 +409,6 @@ int fetch_instruction(uint16_t virtual_address, uint8_t *data)
     if (entry->x == 0)
     {
         return -3;
-    }
-
-    if (entry->p_bit == 0)
-    {
-        return -1;
     }
 
     uint16_t frame_count = get_frame_count();
@@ -445,6 +445,11 @@ int load_data(uint16_t virtual_address, uint8_t *data)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
+    if (entry->p_bit == 0)
+    {
+        return -1;
+    }
+
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
@@ -453,11 +458,6 @@ int load_data(uint16_t virtual_address, uint8_t *data)
     if (entry->r == 0)
     {
         return -3;
-    }
-
-    if (entry->p_bit == 0)
-    {
-        return -1;
     }
 
     uint16_t frame_count = get_frame_count();
@@ -494,6 +494,11 @@ int store_data(uint16_t virtual_address, uint8_t data)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
+    if (entry->p_bit == 0)
+    {
+        return -1;
+    }
+
     if (entry->r == 0 && entry->w == 0 && entry->x == 0)
     {
         return -2;
@@ -502,11 +507,6 @@ int store_data(uint16_t virtual_address, uint8_t data)
     if (entry->w == 0)
     {
         return -3;
-    }
-
-    if (entry->p_bit == 0)
-    {
-        return -1;
     }
 
     uint16_t frame_count = get_frame_count();
