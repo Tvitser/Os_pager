@@ -364,12 +364,6 @@ int get_physical_address(uint16_t virtual_address, uint16_t *physical_address)
         return -2;
     }
 
-    uint16_t frame_count = get_frame_count();
-    if (entry->frame_id >= frame_count)
-    {
-        return -2;
-    }
-
     *physical_address = (uint16_t)(entry->frame_id * page_size + offset);
     return 0;
 }
@@ -409,12 +403,6 @@ int fetch_instruction(uint16_t virtual_address, uint8_t *data)
     if (entry->x == 0)
     {
         return -3;
-    }
-
-    uint16_t frame_count = get_frame_count();
-    if (entry->frame_id >= frame_count)
-    {
-        return -2;
     }
 
     uint16_t physical = (uint16_t)(entry->frame_id * page_size + offset);
@@ -460,12 +448,6 @@ int load_data(uint16_t virtual_address, uint8_t *data)
         return -3;
     }
 
-    uint16_t frame_count = get_frame_count();
-    if (entry->frame_id >= frame_count)
-    {
-        return -2;
-    }
-
     uint16_t physical = (uint16_t)(entry->frame_id * page_size + offset);
     entry->r_bit = 1;
     *data = g_ram_base[physical];
@@ -507,12 +489,6 @@ int store_data(uint16_t virtual_address, uint8_t data)
     if (entry->w == 0)
     {
         return -3;
-    }
-
-    uint16_t frame_count = get_frame_count();
-    if (entry->frame_id >= frame_count)
-    {
-        return -2;
     }
 
     uint16_t physical = (uint16_t)(entry->frame_id * page_size + offset);
