@@ -354,10 +354,16 @@ int get_physical_address(uint16_t virtual_address, uint16_t *physical_address)
 
     tPageTableEntry *entry = &g_active_page_table[page_index];
 
-    // Check if page is present in RAM
+    // Check if page is present in RAM first
     if (entry->p_bit == 0)
     {
         return -1;
+    }
+
+    // Check rwx permissions - rwx=000 means page not accessible (segmentation fault)
+    if (entry->r == 0 && entry->w == 0 && entry->x == 0)
+    {
+        return -2;
     }
 
     *physical_address = (uint16_t)(entry->frame_id * page_size + offset);
